@@ -17,12 +17,12 @@ tqdm
 networkx
 ```
 
-## dataset
+## Dataset
 All the necessary data files can be downloaded from the following links.
 
-For the chemistry dataset, download from [chem data](https://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), unzip it, and put it under dataset/.
+For the chemistry dataset, download from [chem data](https://snap.stanford.edu/gnn-pretrain/data/chem_dataset.zip) (2.5GB), unzip it, and put it under ```bash dataset/ ```.
 
-## train
+## Train
 You can pretrain the MOMTERL model by executing the following steps:
 ```bash
 # Create a directory to save the pretrained model
@@ -32,8 +32,8 @@ mkdir saved_model
 python pretrain.py
 ```
 
-## eval
-In the ```bash finetune/standard ``` directory,excute:
+## Eval
+In the ```bash finetune/standardtune ``` directory,excute:
 ```bash
 python finetune.py
 ```
