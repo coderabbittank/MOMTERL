@@ -33,6 +33,9 @@ python pretrain.py
 ```
 
 ## eval
-
+In the ```bash finetune/standard ``` directory,excute:
+```bash
+python finetune.py
+```
 
 
