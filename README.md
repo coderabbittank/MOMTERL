@@ -37,5 +37,7 @@ In the ```bash finetune/standardtune ``` directory,excute:
 ```bash
 python finetune.py
 ```
+## Note
+When necessary, you should modify the source code file paths according to the actual situation of your code directory.
 
 
