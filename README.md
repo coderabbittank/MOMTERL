@@ -33,7 +33,7 @@ python pretrain.py
 ```
 
 ## Eval
-In the ```bash finetune/standardtune ``` directory,excute:
+In the ``` finetune ``` directory,excute:
 ```bash
 python finetune.py
 ```
