@@ -167,54 +167,6 @@ class BatchMasking(Data):
         return self.batch[-1].item() + 1
 
 
-class BatchMasking2(Data):
-
-    def __init__(self, batch=None, **kwargs):
-        super(BatchMasking2, self).__init__(**kwargs)
-        self.batch = batch
-
-    @staticmethod
-    def from_data_list(data_list):
-        keys = [set(data.keys) for data in data_list]
-        keys = list(set.union(*keys))
-        assert 'batch' not in keys
-
-        batch = BatchMasking()
-
-        for key in keys:
-            batch[key] = []
-        batch.batch = []
-
-        cumsum_node = 0
-        cumsum_edge = 0
-
-        for i, data in enumerate(data_list):
-            num_nodes = data.num_nodes
-            batch.batch.append(torch.full((num_nodes,), i, dtype=torch.long))
-            for key in data.keys:
-                item = data[key]
-                if key in ['edge_index', 'masked_atom_indices','masked_atom_indices_atom']:
-                    item = item + cumsum_node
-                elif key == 'connected_edge_indices':
-                    item = item + cumsum_edge
-                batch[key].append(item)
-
-            cumsum_node += num_nodes
-            cumsum_edge += data.edge_index.shape[1]
-
-        for key in keys:
-            batch[key] = torch.cat(
-                batch[key], dim=data_list[0].__cat_dim__(key, batch[key][0]))
-        batch.batch = torch.cat(batch.batch, dim=-1)
-        return batch.contiguous()
-
-    def cumsum(self, key, item):
-        return key in ['edge_index', 'face', 'masked_atom_indices', 'connected_edge_indices','masked_atom_indices_atom']
-
-    @property
-    def num_graphs(self):
-        return self.batch[-1].item() + 1
-
 
 class MaskAtom:
     def __init__(self, num_atom_type, num_edge_type, mask_rate, inter_mask_rate, mask_edge):
@@ -398,80 +350,6 @@ class MaskAtom:
             self.__class__.__name__, self.num_atom_type, self.num_edge_type,
             self.mask_rate, self.mask_edge)
 
-
-class MaskAtom2:
-    def __init__(self, num_atom_type, num_edge_type, mask_rate, inter_mask_rate, mask_edge):
-        """
-        Randomly masks an atom, and optionally masks edges connecting to it.
-        The mask atom type index is num_possible_atom_type
-        The mask edge type index in num_possible_edge_type
-        :param num_atom_type:
-        :param num_edge_type:
-        :param mask_rate: % of atoms/motifs to be masked
-        :param inter_mask_rate: % of atoms within motif to be masked
-        :param mask_edge: If True, also mask the edges that connect to the
-        masked atoms
-        """
-        self.num_atom_type = num_atom_type
-        self.num_edge_type = num_edge_type
-        self.mask_rate = mask_rate
-        self.mask_edge = mask_edge
-
-        self.num_chirality_tag = 3
-        self.num_bond_direction = 3
-
-        self.offset = 0
-
-        self.inter_mask_rate = inter_mask_rate
-
-    def __call__(self, data, masked_atom_indices=None):
-        """
-        :param data: pytorch geometric data object. Assume that the edge
-        ordering is the default pytorch geometric ordering, where the two
-        directions of a single edge occur in pairs.
-        Eg. data.edge_index = tensor([[0, 1, 1, 2, 2, 3],
-                                     [1, 0, 2, 1, 3, 2]])
-        :param masked_atom_indices: If None, then randomly samples num_atoms
-        * mask rate number of atom indices
-        Otherwise a list of atom idx that sets the atoms to be masked (for
-        debugging only)
-        :return: None, Creates new attributes in original data object:
-        data.mask_node_idx
-        data.mask_node_label
-        data.mask_edge_idx
-        data.mask_edge_label
-        """
-
-        # mol = Chem.MolFromSmiles(smiles)
-
-        num_atoms = data.x.size()[0]
-        sample_size = int(num_atoms * self.mask_rate + 1)
-
-        masked_atom_indices = []
-
-        masked_atom_indices = random.sample(range(num_atoms), sample_size)
-
-        # create mask node label by copying atom feature of mask atom
-        # node masking
-
-        mask_node_labels_list = []
-        for atom_idx in masked_atom_indices:
-            mask_node_labels_list.append(data.x[atom_idx].view(1, -1))
-
-        data.mask_node_label = torch.cat(mask_node_labels_list, dim=0)
-        data.masked_atom_indices_atom = torch.tensor(masked_atom_indices)
-        # print(data.mask_node_label[:,0])
-        data.node_attr_label = data.mask_node_label[:, 0]
-
-        for atom_idx in masked_atom_indices:
-            data.x[atom_idx] = torch.tensor([self.num_atom_type, data.x[atom_idx][1]])
-
-        return data
-
-    def __repr__(self):
-        return '{}(num_atom_type={}, num_edge_type={}, mask_rate={}, mask_edge={})'.format(
-            self.__class__.__name__, self.num_atom_type, self.num_edge_type,
-            self.mask_rate, self.mask_edge)
 
 
 def molgraph_to_graph_data(batch):
