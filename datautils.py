@@ -139,7 +139,7 @@ class BatchMasking(Data):
             batch.batch2.append(torch.full((num_nodes,), i, dtype=torch.long))
             for key in data.keys:
                 item = data[key]
-                if key in ['edge_index_nosuper', 'masked_atom_indices']:
+                if key in ['edge_index_nosuper', 'masked_atom_indices','masked_atom_indices_atom']:
                     item = item + cumsum_node_nosuper
                 elif key == 'connected_edge_indices':
                     item = item + cumsum_edge_nosuper
@@ -160,7 +160,7 @@ class BatchMasking(Data):
         return batch.contiguous()
 
     def cumsum(self, key, item):
-        return key in ['edge_index_nosuper', 'face', 'masked_atom_indices', 'connected_edge_indices', 'edge_index']
+        return key in ['edge_index_nosuper', 'face', 'masked_atom_indices', 'connected_edge_indices', 'edge_index','masked_atom_indices_atom']
 
     @property
     def num_graphs(self):
