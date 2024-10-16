@@ -89,24 +89,6 @@ class DataLoaderMaskingPred(torch.utils.data.DataLoader):
         return BatchMasking.from_data_list(batchs)
 
 
-class DataLoaderMaskingPred2(torch.utils.data.DataLoader):
-
-    def __init__(self, dataset, smiles_list, batch_size=1, shuffle=True, motif_mask_rate=0.25, intermotif_mask_rate=1,
-                 mask_edge=0.0, **kwargs):
-        self._transform = MaskAtom2(num_atom_type=119, num_edge_type=5, mask_rate=motif_mask_rate,
-                                    inter_mask_rate=intermotif_mask_rate, mask_edge=mask_edge)
-        self.smiles_list = smiles_list
-        super(DataLoaderMaskingPred2, self).__init__(
-            dataset,
-            batch_size,
-            shuffle,
-            collate_fn=self.collate_fn,
-            **kwargs)
-
-    def collate_fn(self, batches):
-        batchs = [self._transform(x) for x in batches]
-        return BatchMasking2.from_data_list(batchs)
-
 
 class BatchMasking(Data):
 
