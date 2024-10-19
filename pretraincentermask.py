@@ -114,7 +114,7 @@ def train(model_list, loader1, optimizer, device, args):
 
         batch = batch.to(device)
 
-        # motif BRICS mask
+        
         node_rep, _ = model.forward_cl(batch.x_nosuper, batch.edge_index_nosuper, batch.edge_attr_nosuper, batch.batch1)
 
         with torch.no_grad():
