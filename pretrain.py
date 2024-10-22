@@ -138,7 +138,7 @@ def train(model_list, loader1, optimizer, device, args):
 
         loss_g_cl = loss_cl(graph_ori_rep, x1_rep)
 
-        loss = loss_g_cl * 0.9 + loss_mask
+        loss = loss_g_cl * 0.1 + loss_mask
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -172,7 +172,7 @@ def main():
     parser.add_argument('--dataset', type=str, default='zinc_standard_agent',
                         help='root directory of dataset. For now, only classification.')
     parser.add_argument('--gnn_type', type=str, default="gin")
-    parser.add_argument('--output_model_file', type=str, default='./saved_model/MOMTERL0.9.pth',
+    parser.add_argument('--output_model_file', type=str, default='./saved_model/MOMTERL0.1.pth',
                         help='filename to output the pre-trained model')
     parser.add_argument('--num_workers', type=int, default=8, help='number of workers for dataset loading')
     parser.add_argument("--hidden_size", type=int, default=300, help='hidden size')
