@@ -491,8 +491,8 @@ class MoleculeDataset(InMemoryDataset):
                                    dtype='str')
             smiles_list = list(input_df['smiles'])
             zinc_id_list = list(input_df['zinc_id'])
-            smiles_list = smiles_list[:250000]
-            zinc_id_list = zinc_id_list[:250000]
+            smiles_list = smiles_list[:500000]
+            zinc_id_list = zinc_id_list[:500000]
             # combined_list = list(zip(smiles_list, zinc_id_list))
             # random.seed(42)
             # random.shuffle(combined_list)
