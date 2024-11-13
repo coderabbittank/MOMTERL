@@ -115,7 +115,7 @@ def train(model_list, loader1, optimizer, device, args):
             masked_node_indices_atom = batch.masked_atom_indices_atom
             batch_origin_x = copy.deepcopy(batch.x_nosuper)
             batch_origin_x[masked_node_indices_atom] = batch.mask_node_label
-        _, graph_ori_rep = model.forward_cl(batch_origin_x, batch.edge_index_nosuper, batch.edge_attr_nosuper,
+            _, graph_ori_rep = model.forward_cl(batch_origin_x, batch.edge_index_nosuper, batch.edge_attr_nosuper,
                                                 batch.batch1)
 
         label_atom = batch.node_attr_label
